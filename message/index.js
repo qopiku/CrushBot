@@ -1,11 +1,11 @@
 exports.help = () => {
-    return `CrushBot adalah bot yang digunakan untuk mengobrol secara anonim dengan orang asing di WhatsApp. Bot ini masih dalam tahap pengembangan dan saat ini hanya mendukung pesan teks, foto, voice note dan stiker saja.
+    return `CrushBot adalah bot yang digunakan untuk mengobrol secara anonim dengan orang asing di WhatsApp. Bot ini masih dalam tahap pengembangan dan saat ini hanya mendukung pesan teks, foto, voice note dan stiker saja (tidak dengan stiker bergerak).
 
 *Peringatan*
 Jika kamu mengirimkan stiker mungkin sedikit lambat untuk sampai ke pasangan!
 Media seperti video, document, location, audio, dan vcard (kontak) tidak akan diterima pasangan!
 
-*Jadwal aktif bisa dilihat pada info nomor WhatsApp ini :D*`
+*Harap selalu cek info kontak WhatsApp Bot ini yaa :D*`
 }
 
 exports.commands = () => {

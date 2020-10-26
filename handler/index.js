@@ -223,6 +223,7 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                                 })
                                 .catch((err) => {
                                     fs.unlink(filename)
+                                    client.sendText(from, `*INFORMASI*\nStiker bergerak belum support pada WhatsApp Bot ini, artinya stiker yang kamu kirim tidak sampai ke pasangan`)
                                     console.log(color('[ERROR]', 'red'), `Tidak support sticker bergerak sayang :(`)
                                 })
                             })
@@ -230,18 +231,23 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                             break
                         }
                         case 'video': {
+                            client.sendText(from, `*INFORMASI*\nVideo belum support pada WhatsApp Bot ini, artinya video yang kamu kirim tidak sampai ke pasangan`)
                             break
                         }
                         case 'document': {
+                            client.sendText(from, `*INFORMASI*\nDokumen belum support pada WhatsApp Bot ini, artinya dokumen yang kamu kirim tidak sampai ke pasangan`)
                             break
                         }
                         case 'location': {
+                            client.sendText(from, `*INFORMASI*\nLokasi belum support pada WhatsApp Bot ini, artinya lokasi yang kamu kirim tidak sampai ke pasangan`)
                             break
                         }
                         case 'audio': {
+                            client.sendText(from, `*INFORMASI*\nAudio belum support pada WhatsApp Bot ini, artinya audio yang kamu kirim tidak sampai ke pasangan`)
                             break
                         }
                         case 'vcard': {
+                            client.sendText(from, `*INFORMASI*\nVCard bergerak belum support pada WhatsApp Bot ini, artinya VCard yang kamu kirim tidak sampai ke pasangan`)
                             break
                         }
                         case 'ptt': {
