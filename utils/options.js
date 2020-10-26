@@ -1,9 +1,4 @@
 const fs = require('fs')
-/**
- * Get Client Options
- * @param  {Function} start function
- * @param  {Boolean} headless
- */
 
 module.exports = options = (headless, start) => {
     const options = {

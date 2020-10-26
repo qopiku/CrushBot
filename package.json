@@ -1,7 +1,7 @@
 {
   "name": "crushbot",
   "version": "0.0.1",
-  "description": "Anonymous Chat WhatsApp Bot",
+  "description": "Anonymous Chat for WhatsApp Bot",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

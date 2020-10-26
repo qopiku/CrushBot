@@ -13,12 +13,11 @@ const query = require('./query')
 
 module.exports = msgHandler = async (client = new Client(), message, db) => {
     try {
-        const { type, id, from, t, sender, isGroupMsg, chat, caption, isMedia, mimetype, quotedMsg, quotedMsgObj, mentionedJidList } = message
+        const { type, from, t, sender, isGroupMsg, chat, caption, mimetype } = message
         let { body } = message
         const { name, formattedTitle } = chat
         let { pushname, verifiedName, formattedName } = sender
         pushname = pushname || verifiedName || formattedName // verifiedName is the name of someone who uses a business account
-        const botNumber = await client.getHostNumber() + '@c.us'
 
         // Bot Prefix
         const prefix = '/'
@@ -28,8 +27,9 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
         const isCmd = body.startsWith(prefix)
         const uaOverride = process.env.UserAgent
 
+        filter.removeWords('suka')
         // Add words to the blacklist
-        filter.addWords('anjing', 'babi', 'kunyuk', 'bajingan', 'asu', 'bangsat', 'kampret', 'kontol', 'memek', 'ngentot', 'pentil', 'perek', 'pepek', 'pecun', 'bencong', 'banci', 'maho', 'gila', 'sinting', 'tolol', 'sarap', 'setan', 'lonte', 'hencet', 'taptei', 'kampang', 'pilat', 'keparat', 'bejad', 'gembel', 'brengsek', 'tai', 'anjrit', 'bangsat', 'fuck', 'tete', 'tetek', 'ngulum', 'jembut', 'totong', 'kolop', 'puki', 'pukimak', 'bodat', 'heang', 'jancuk', 'burit', 'titit', 'nenen', 'bejat', 'silit', 'sempak', 'fucking', 'asshole', 'bitch', 'penis', 'vagina', 'klitoris', 'kelentit', 'borjong', 'dancuk', 'pantek', 'taek', 'itil', 'teho', 'bejat', 'pantat', 'bagudung', 'babami', 'kanciang', 'bungul', 'idiot', 'kimak', 'henceut', 'kacuk', 'blowjob', 'pussy', 'dick', 'damn', 'ass', 'xnxx', 'xvideos', 'xhamster')
+        filter.addWords('anjing', 'babi', 'kunyuk', 'bajingan', 'asu', 'bangsat', 'kampret', 'kontol', 'memek', 'ngentot', 'pentil', 'perek', 'pepek', 'pecun', 'bencong', 'banci', 'maho', 'gila', 'sinting', 'tolol', 'sarap', 'setan', 'lonte', 'hencet', 'taptei', 'kampang', 'pilat', 'keparat', 'bejad', 'gembel', 'brengsek', 'tai', 'anjrit', 'bangsat', 'fuck', 'tete', 'tetek', 'ngulum', 'jembut', 'totong', 'kolop', 'puki', 'pukimak', 'bodat', 'heang', 'jancuk', 'burit', 'titit', 'nenen', 'bejat', 'silit', 'sempak', 'fucking', 'asshole', 'bitch', 'penis', 'vagina', 'klitoris', 'kelentit', 'borjong', 'dancuk', 'pantek', 'taek', 'itil', 'teho', 'bejat', 'pantat', 'bagudung', 'babami', 'kanciang', 'bungul', 'idiot', 'kimak', 'henceut', 'kacuk', 'blowjob', 'pussy', 'dick', 'damn', 'ass')
         const safeMessages = filter.clean((type === 'chat') ? message.body : ((type === 'image' && caption)) ? caption : '')
 
         // If this message is from a group
@@ -204,6 +204,8 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                             break
                         }
                         case 'sticker': {
+                            // Padahal gampang pake sendRawWebpAsSticker keliatannya, cuma eh belum siap pakai kata open-wa hehe
+
                             const filename = `${__dirname}/../files/${message.t}.${mime.extension(message.mimetype)}`
                             const convertname = `${__dirname}/../files/${message.t}.png`
                             const mediaData = await decryptMedia(message, uaOverride)
@@ -221,7 +223,7 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                                 })
                                 .catch((err) => {
                                     fs.unlink(filename)
-                                    console.log(color('[ERROR]', 'red'), `Sticker bergerak`)
+                                    console.log(color('[ERROR]', 'red'), `Tidak support sticker bergerak sayang :(`)
                                 })
                             })
                             .catch(err => console.log(color('[ERROR]', 'red'), err))

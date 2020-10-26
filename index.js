@@ -15,7 +15,7 @@ const start = (client = new Client()) => {
     })
 
     // Set my status (about me)
-    client.setMyStatus('ketik /help untuk memulai. insya allah aktif 24 jam (kecuali mati lampu). delay? berarti sinyal host jelek')
+    client.setMyStatus('KETIK /help UNTUK MEMULAI. INSYA ALLAH AKTIF 24JAM (KECUALI MATI LAMPU ATAU GANGGUAN LAINNYA). DELAY? SABAR HYUNG, ANTRIAN BANYAK :D')
 
     // listening on message
     client.onMessage((message) => {
