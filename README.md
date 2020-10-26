@@ -27,7 +27,7 @@ Install the dependencies:
 $ npm install --save
 ```
 ### Usage
-1. Run the Whatsapp Bot
+Run the Whatsapp Bot
 
 ```bash
 $ npm run start
@@ -50,8 +50,7 @@ $ sudo apt install ./google-chrome-stable_current_amd64.deb
 - [```YogaSakti/imageToSticker```](https://github.com/YogaSakti/imageToSticker)
 - [```fdciabdul/InsideHeartz-WhatsApp-Bot```](https://github.com/fdciabdul/InsideHeartz-WhatsApp-Bot)
 ### Legal
-WhatsApp are not allowing user using External Automation
-
+WhatsApp are not allowing user using External Automation<br>
 **USE AT YOUR OWN RISK**
 ### License
 [Apache-2.0](https://github.com/sProDev/CrushBot/blob/master/LICENSE)
