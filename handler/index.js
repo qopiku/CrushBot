@@ -257,8 +257,7 @@ module.exports = msgHandler = async (client = new Client(), message, db, tempDat
                             break
                         }
                         case 'location': {
-                            const { loc, lat, lng } = message
-                            client.sendLocation(people.partner, lat, lng, loc)
+                            await client.sendLocation(people.partner, message.lat, message.lng, message.loc)
                             break
                         }
                         case 'audio': {
