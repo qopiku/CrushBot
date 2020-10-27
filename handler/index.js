@@ -11,7 +11,7 @@ const { color, processTime, isUrl } = require('../utils')
 const menuText = require('../message')
 const query = require('./query')
 
-module.exports = msgHandler = async (client = new Client(), message, db) => {
+module.exports = msgHandler = async (client = new Client(), message, db, tempData) => {
     try {
         const { type, from, t, sender, isGroupMsg, chat, caption, mimetype } = message
         let { body } = message
@@ -74,6 +74,8 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                     }
                     // CLIENT COMMAND
                     case 'search': {
+                        tempData.set(from, false)
+
                         if (people.partner && people.partner !== null) return client.sendText(from, `Sekarang kamu sedang dalam percakapan🤔\n*/next* — Temukan pasangan baru\n*/stop* — Hentikan percakapan ini`)
 
                         client.sendText(from, `Mencari pasangan...`)
@@ -111,6 +113,8 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                         break
                     }
                     case 'next': {
+                        tempData.set(from, false)
+                        
                         var dataUpdate
                         if (people.partner && people.partner !== null) {
                             dataUpdate = [
@@ -148,7 +152,14 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                                         })
                                         .catch(err => console.log(color('[ERROR]', 'red'), err))
                                     } else {
-                                        await client.sendText(from, `Pasangan tidak dapat ditemukan🥺\n\nAyo bantu sebarluaskan nomor bot ini yaa, supaya kamu lebih mudah untuk mendapatkan pasangan😉`)
+                                        query.select(db, from)
+                                        .then(async (human) => {
+                                            if (human.partner == null) {
+                                                await client.sendText(from, `Pasangan tidak dapat ditemukan🥺\n\nAyo bantu sebarluaskan nomor bot ini yaa, supaya kamu lebih mudah untuk mendapatkan pasangan😉`)
+                                            } else {
+                                                await client.sendText(from, `Pasangan ditemukan🐵\n*/next* — Temukan pasangan baru\n*/stop* — Hentikan percakapan ini`)
+                                            }
+                                        })
                                     }
                                 })
                                 .catch(err => console.log(color('[ERROR]', 'red'), err))
@@ -159,6 +170,8 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                         break
                     }
                     case 'stop': {
+                        tempData.set(from, false)
+                        
                         if (people.partner && people.partner !== null) {
                             var dataUpdate = [
                                 { partner: null, contact: from, status: 0 },
@@ -176,6 +189,8 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                         break
                     }
                     case 'sharecontact': {
+                        tempData.set(from, false)
+                        
                         if (people.partner && people.partner !== null) {
                             client.sendContact(people.partner, from)
                             client.sendText(from, `Kontak WhatsApp kamu telah dikirim ke pasangan`)
@@ -194,6 +209,8 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
             // Else (if this message is'nt a commands)
             else {
                 if (people.partner && people.partner !== null) {
+                    tempData.set(from, false)
+                    
                     console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), 'Message from', color(pushname), 'for', color('+' + people.partner.replace('@c.us', '')))
 
                     switch (type) {
@@ -224,7 +241,7 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                                 })
                                 .catch((err) => {
                                     fs.unlink(filename)
-                                    client.sendText(from, `*INFORMASI*\nStiker bergerak belum support pada WhatsApp Bot ini, artinya stiker yang kamu kirim tidak sampai ke pasangan`)
+                                    client.sendText(from, `*INFORMASI*\n\nStiker bergerak belum support pada WhatsApp Bot ini, artinya stiker yang kamu kirim tidak sampai ke pasangan`)
                                     console.log(color('[ERROR]', 'red'), `Tidak support sticker bergerak sayang :(`)
                                 })
                             })
@@ -232,23 +249,24 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                             break
                         }
                         case 'video': {
-                            client.sendText(from, `*INFORMASI*\nVideo belum support pada WhatsApp Bot ini, artinya video yang kamu kirim tidak sampai ke pasangan`)
+                            client.sendText(from, `*INFORMASI*\n\nVideo belum support pada WhatsApp Bot ini, artinya video yang kamu kirim tidak sampai ke pasangan`)
                             break
                         }
                         case 'document': {
-                            client.sendText(from, `*INFORMASI*\nDokumen belum support pada WhatsApp Bot ini, artinya dokumen yang kamu kirim tidak sampai ke pasangan`)
+                            client.sendText(from, `*INFORMASI*\n\nDokumen belum support pada WhatsApp Bot ini, artinya dokumen yang kamu kirim tidak sampai ke pasangan`)
                             break
                         }
                         case 'location': {
-                            client.sendText(from, `*INFORMASI*\nLokasi belum support pada WhatsApp Bot ini, artinya lokasi yang kamu kirim tidak sampai ke pasangan`)
+                            const { loc, lat, lng } = message
+                            client.sendLocation(people.partner, lat, lng, loc)
                             break
                         }
                         case 'audio': {
-                            client.sendText(from, `*INFORMASI*\nAudio belum support pada WhatsApp Bot ini, artinya audio yang kamu kirim tidak sampai ke pasangan`)
+                            client.sendText(from, `*INFORMASI*\n\nAudio belum support pada WhatsApp Bot ini, artinya audio yang kamu kirim tidak sampai ke pasangan`)
                             break
                         }
                         case 'vcard': {
-                            client.sendText(from, `*INFORMASI*\nVCard bergerak belum support pada WhatsApp Bot ini, artinya VCard yang kamu kirim tidak sampai ke pasangan`)
+                            client.sendText(from, `*INFORMASI*\n\nVCard belum support pada WhatsApp Bot ini, artinya VCard yang kamu kirim tidak sampai ke pasangan`)
                             break
                         }
                         case 'ptt': {
@@ -271,7 +289,13 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                         }
                     }
                 } else {
-                    client.sendText(from, `Ketik */search* untuk menemukan pasangan`)
+                    if (tempData.get(from) == undefined) {
+                        tempData.set(from, false)
+                    }
+                    if (tempData.get(from) == false) {
+                        client.sendText(from, `Ketik */search* untuk menemukan pasangan`)
+                    }
+                    tempData.set(from, true)
                 }
             }
         })

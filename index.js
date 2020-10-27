@@ -4,6 +4,8 @@ const options = require('./utils/options')
 const db = require('better-sqlite3')('database.db')
 const msgHandler = require('./handler')
 
+var tempData = new Map()
+
 const start = (client = new Client()) => {
     console.log('[DEV]', color('sProDev', 'yellow'))
     console.log('[CLIENT] CLIENT Started!')
@@ -27,7 +29,7 @@ const start = (client = new Client()) => {
                 }
             })
         // Message Handler
-        msgHandler(client, message, db)
+        msgHandler(client, message, db, tempData)
     })
 
     // listen group invitation
