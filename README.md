@@ -53,7 +53,7 @@ $ sudo apt install ./google-chrome-stable_current_amd64.deb
 WhatsApp are not allowing user using External Automation<br>
 **USE AT YOUR OWN RISK**
 ### License
-[Apache-2.0](https://github.com/sProDev/CrushBot/blob/master/LICENSE)
+[Apache-2.0](https://github.com/sProDev/CrushBot/blob/main/LICENSE)
 
 ## Support Me
 ### Global
