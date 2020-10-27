@@ -29,7 +29,7 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
 
         filter.removeWords('suka')
         // Add words to the blacklist
-        filter.addWords('anjing', 'babi', 'kunyuk', 'bajingan', 'asu', 'bangsat', 'kampret', 'kontol', 'memek', 'ngentot', 'pentil', 'perek', 'pepek', 'pecun', 'bencong', 'banci', 'maho', 'gila', 'sinting', 'tolol', 'sarap', 'setan', 'lonte', 'hencet', 'taptei', 'kampang', 'pilat', 'keparat', 'bejad', 'gembel', 'brengsek', 'tai', 'anjrit', 'bangsat', 'fuck', 'tete', 'tetek', 'ngulum', 'jembut', 'totong', 'kolop', 'puki', 'pukimak', 'bodat', 'heang', 'jancuk', 'burit', 'titit', 'nenen', 'bejat', 'silit', 'sempak', 'fucking', 'asshole', 'bitch', 'penis', 'vagina', 'klitoris', 'kelentit', 'borjong', 'dancuk', 'pantek', 'taek', 'itil', 'teho', 'bejat', 'pantat', 'bagudung', 'babami', 'kanciang', 'bungul', 'idiot', 'kimak', 'henceut', 'kacuk', 'blowjob', 'pussy', 'dick', 'damn', 'ass')
+        filter.addWords('anjing', 'babi', 'kunyuk', 'bajingan', 'asu', 'bangsat', 'kampret', 'kontol', 'memek', 'ngentot', 'pentil', 'perek', 'pepek', 'pecun', 'bencong', 'banci', 'maho', 'gila', 'sinting', 'tolol', 'sarap', 'lonte', 'hencet', 'taptei', 'kampang', 'pilat', 'keparat', 'bejad', 'gembel', 'brengsek', 'tai', 'anjrit', 'bangsat', 'fuck', 'tete', 'tetek', 'ngulum', 'jembut', 'totong', 'kolop', 'puki', 'pukimak', 'bodat', 'heang', 'jancuk', 'burit', 'titit', 'nenen', 'bejat', 'silit', 'sempak', 'fucking', 'asshole', 'bitch', 'penis', 'vagina', 'klitoris', 'kelentit', 'borjong', 'dancuk', 'pantek', 'taek', 'itil', 'teho', 'bejat', 'bagudung', 'babami', 'kanciang', 'bungul', 'idiot', 'kimak', 'henceut', 'kacuk', 'blowjob', 'pussy', 'dick', 'damn', 'ass')
         const safeMessages = filter.clean((type === 'chat') ? message.body : ((type === 'image' && caption)) ? caption : '')
 
         // If this message is from a group
@@ -53,10 +53,7 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                     }
                     // BOT COMMANDS
                     case 'help': {
-                        client.sendText(from, menuText.help())
-                        .then(() => {
-                            client.sendText(from, menuText.commands())
-                        })
+                        client.sendText(from, menuText.help() + `\n\n` + menuText.commands())
                         break
                     }
                     case 'about': {
@@ -82,7 +79,7 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                         setTimeout(() => {
                             client.sendText(from, `Mencari pasangan...`)
                         }, 2000)
-                        
+
                         query.status(db, from)
                         .then(() => {
                             query.search(db, from)
@@ -209,7 +206,7 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                             const filename = `${__dirname}/../files/${message.t}.${mime.extension(message.mimetype)}`
                             const convertname = `${__dirname}/../files/${message.t}.png`
                             const mediaData = await decryptMedia(message, uaOverride)
-                            
+
                             fs.writeFile(filename, mediaData)
                             .then(() => {
                                 const result = webp.dwebp(filename, convertname, '-o')
