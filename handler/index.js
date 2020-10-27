@@ -76,10 +76,7 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                     case 'search': {
                         if (people.partner && people.partner !== null) return client.sendText(from, `Sekarang kamu sedang dalam percakapan🤔\n*/next* — Temukan pasangan baru\n*/stop* — Hentikan percakapan ini`)
 
-                        setTimeout(() => {
-                            client.sendText(from, `Mencari pasangan...`)
-                        }, 2000)
-
+                        client.sendText(from, `Mencari pasangan...`)
                         query.status(db, from)
                         .then(() => {
                             query.search(db, from)
@@ -98,7 +95,14 @@ module.exports = msgHandler = async (client = new Client(), message, db) => {
                                     })
                                     .catch(err => console.log(color('[ERROR]', 'red'), err))
                                 } else {
-                                    await client.sendText(from, `Pasangan tidak dapat ditemukan🥺\n\nAyo bantu sebarluaskan nomor bot ini yaa, supaya kamu lebih mudah untuk mendapatkan pasangan😉`)
+                                    query.select(db, from)
+                                    .then(async (human) => {
+                                        if (human.partner == null) {
+                                            await client.sendText(from, `Pasangan tidak dapat ditemukan🥺\n\nAyo bantu sebarluaskan nomor bot ini yaa, supaya kamu lebih mudah untuk mendapatkan pasangan😉`)
+                                        } else {
+                                            await client.sendText(from, `Pasangan ditemukan🐵\n*/next* — Temukan pasangan baru\n*/stop* — Hentikan percakapan ini`)
+                                        }
+                                    })
                                 }
                             })
                             .catch(err => console.log(color('[ERROR]', 'red'), err))
