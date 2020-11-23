@@ -1,11 +1,11 @@
 const fs = require('fs')
 const path = require('path');
 // the browser path
-const path = path.resolve('/opt/google/chrome/google-chrome')
+const chrome = path.resolve('/opt/google/chrome/google-chrome')
 
 module.exports = options = (headless, start) => {
     const options = {
-        executablePath: path,
+        executablePath: chrome,
         headless: headless,
         qrRefreshS: 20,
         qrTimeout: 0,
