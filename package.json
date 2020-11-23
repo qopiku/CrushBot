@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/sProDev/crushbot#readme",
   "dependencies": {
-    "@open-wa/wa-automate": "^3.0.6",
+    "@open-wa/wa-automate": "^3.1.0",
     "bad-words": "^3.0.3",
     "better-sqlite3": "^7.1.1",
     "chalk": "^4.1.0",
