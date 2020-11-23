@@ -41,15 +41,22 @@ const start = (client = new Client()) => {
 }
 
 create({
-    sessionId: "sProDev",
-    useChrome: true,
-    executablePath: '/opt/google/chrome/',
-    authTimeout: 60, //wait only 60 seconds to get a connection with the host account device
-    blockCrashLogs: true,
-    disableSpins: true,
+    sessionId: 'Imperial',
     headless: true,
-    hostNotificationLang: 'PT_BR',
-    logConsole: false,
-    popup: true,
     qrTimeout: 0,
+    authTimeout: 0,
+    restartOnCrash: start,
+    cacheEnabled: false,
+    useChrome: true,
+    killProcessOnBrowserClose: true,
+    throwErrorOnTosBlock: false,
+    chromiumArgs: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--aggressive-cache-discard',
+        '--disable-cache',
+        '--disable-application-cache',
+        '--disable-offline-load-stale-cache',
+        '--disk-cache-size=0'
+    ]
 }).then((client) => start(client)).catch((err) => new Error(err))
