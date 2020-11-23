@@ -257,7 +257,7 @@ module.exports = msgHandler = async (client = new Client(), message, db, tempDat
                             break
                         }
                         case 'location': {
-                            await client.sendLocation(people.partner, message.lat, message.lng, message.loc)
+                            client.sendText(from, `*INFORMASI*\n\nDokumenLokasi belum support pada WhatsApp Bot ini, artinya lokasi yang kamu kirim tidak sampai ke pasangan`)
                             break
                         }
                         case 'audio': {
