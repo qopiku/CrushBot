@@ -32,6 +32,8 @@
     "fs": "0.0.1-security",
     "mime-types": "^2.1.27",
     "moment-timezone": "^0.5.31",
+    "path": "^0.12.7",
+    "puppeteer": "^5.5.0",
     "webp-converter": "^2.3.0"
   }
 }
