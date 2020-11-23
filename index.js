@@ -1,4 +1,4 @@
-const { create, client, Client } = require('@open-wa/wa-automate')
+const { create, Client } = require('@open-wa/wa-automate')
 const { color } = require('./utils')
 const db = require('better-sqlite3')('database.db')
 const msgHandler = require('./handler')
@@ -40,8 +40,8 @@ const start = (client = new Client()) => {
             }))
 }
 
-create({
-    sessionId: 'Imperial',
+const options = {
+    sessionId: 'sProDev',
     headless: true,
     qrTimeout: 0,
     authTimeout: 0,
@@ -59,4 +59,8 @@ create({
         '--disable-offline-load-stale-cache',
         '--disk-cache-size=0'
     ]
-}).then((client) => start(client)).catch((err) => new Error(err))
+}
+
+create(options)
+    .then((client) => start(client))
+    .catch((err) => new Error(err))
