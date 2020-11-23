@@ -17,7 +17,7 @@ const start = (client = new Client()) => {
     })
 
     // Set my status (about me)
-    client.setMyStatus('KETIK /help UNTUK MEMULAI. INSYA ALLAH AKTIF 24JAM (KECUALI MATI LAMPU ATAU GANGGUAN LAINNYA). DELAY? SABAR HYUNG, ANTRIAN BANYAK :D')
+    client.setMyStatus('JANGAN SPAM STIKER SAYANG :) KETIK "/help" UNTUK MEMULAI. JIKA RESPON BOT LAMBAT, ARTINYA PENGGUNA YG ONLINE DI BOT INI SUDAH LEBIH DARI 50-AN. TUNGGU AUTHOR RESTART BOTNYA, TERIMAKASIH :*')
 
     // listening on message
     client.onMessage((message) => {
