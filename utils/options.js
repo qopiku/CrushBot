@@ -2,14 +2,12 @@ const fs = require('fs')
 
 module.exports = options = (headless, start) => {
     const options = {
-        headless: headless,
-        qrRefreshS: 20,
+        sessionId: 'sProDev',
+        headless: true,
         qrTimeout: 0,
         authTimeout: 0,
-        autoRefresh: true,
         restartOnCrash: start,
         cacheEnabled: false,
-        // executablePath: execPath,
         useChrome: true,
         killProcessOnBrowserClose: true,
         throwErrorOnTosBlock: false,
