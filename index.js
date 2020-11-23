@@ -1,6 +1,5 @@
 const { create, client, Client } = require('@open-wa/wa-automate')
 const { color } = require('./utils')
-const options = require('./utils/options')
 const db = require('better-sqlite3')('database.db')
 const msgHandler = require('./handler')
 
