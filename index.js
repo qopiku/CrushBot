@@ -41,6 +41,14 @@ const start = (client = new Client()) => {
             }))
 }
 
-create(options(true, start))
-    .then((client) => start(client))
-    .catch((err) => new Error(err))
+create([
+    sessionId: "sProDev",
+    authTimeout: 60, //wait only 60 seconds to get a connection with the host account device
+    blockCrashLogs: true,
+    disableSpins: true,
+    headless: true,
+    hostNotificationLang: 'PT_BR',
+    logConsole: false,
+    popup: true,
+    qrTimeout: 0,
+]).then((client) => start(client)).catch((err) => new Error(err))
