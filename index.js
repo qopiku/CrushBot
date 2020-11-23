@@ -42,6 +42,8 @@ const start = (client = new Client()) => {
 
 create({
     sessionId: "sProDev",
+    useChrome: true,
+    executablePath: '/opt/google/chrome/',
     authTimeout: 60, //wait only 60 seconds to get a connection with the host account device
     blockCrashLogs: true,
     disableSpins: true,
