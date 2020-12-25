@@ -1,0 +1,36 @@
+{
+  "name": "crushbot",
+  "version": "1.0.0",
+  "description": "Anonymous Chat Bot for WhatsApp",
+  "main": "start.js",
+  "scripts": {
+    "start": "node ./start.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sProDev/CrushBot.git"
+  },
+  "keywords": [
+    "anonymous",
+    "chat",
+    "whatsapp",
+    "bot"
+  ],
+  "author": "sProDev",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/sProDev/CrushBot/issues"
+  },
+  "homepage": "https://github.com/sProDev/CrushBot#readme",
+  "dependencies": {
+    "@open-wa/wa-automate": "^3.1.12",
+    "bad-words": "^3.0.4",
+    "chalk": "^4.1.0",
+    "dotenv": "^8.2.0",
+    "mime-types": "^2.1.27",
+    "moment-timezone": "^0.5.32",
+    "rethinkdb": "^2.4.2",
+    "update-json-file": "^1.1.1",
+    "webp-converter": "^2.3.1"
+  }
+}
