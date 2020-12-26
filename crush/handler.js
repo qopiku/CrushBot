@@ -30,13 +30,15 @@ module.exports = handler = async (client, message, connection, tempdata) => {
         let { pushname, verifiedName, formattedName } = sender
         pushname = pushname || verifiedName || formattedName
 
-        body = (type === 'chat') ? body : ((type === 'image' && caption) ? caption : '')
+        body = (type === 'chat') ? message.body : ((type === 'image' && caption)) ? caption : ''
         const uaOverride = "WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
 
         filter.removeWords('suka')
         // add words to the blacklist
         filter.addWords('anjing', 'babi', 'kunyuk', 'bajingan', 'asu', 'bangsat', 'kampret', 'kontol', 'memek', 'ngentot', 'pentil', 'perek', 'pepek', 'pecun', 'bencong', 'banci', 'maho', 'gila', 'sinting', 'tolol', 'sarap', 'lonte', 'hencet', 'taptei', 'kampang', 'pilat', 'keparat', 'bejad', 'gembel', 'brengsek', 'tai', 'anjrit', 'bangsat', 'fuck', 'tete', 'tetek', 'ngulum', 'jembut', 'totong', 'kolop', 'puki', 'pukimak', 'bodat', 'heang', 'jancuk', 'burit', 'titit', 'nenen', 'bejat', 'silit', 'sempak', 'fucking', 'asshole', 'bitch', 'penis', 'vagina', 'klitoris', 'kelentit', 'borjong', 'dancuk', 'pantek', 'taek', 'itil', 'teho', 'bejat', 'bagudung', 'babami', 'kanciang', 'bungul', 'idiot', 'kimak', 'henceut', 'kacuk', 'blowjob', 'pussy', 'dick', 'damn', 'ass')
-        const safeMessage = (body) ? filter.clean(body) : ''
+        const safeMessage = filter.clean((type === 'chat') ? message.body : ((type === 'image' && caption)) ? caption : '').catch(() => {
+            return message.body
+        })
 
         // ignore chat from groups
         if (isGroupMsg) return
@@ -253,7 +255,7 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                     tempdata.set(mapkey, false)
                                 }
                                 if (tempdata.get(mapkey) == false) {
-                                    client.sendText(from, `Ketik */search* untuk menemukan pasangan`)
+                                    client.sendText(from, `Ketik */search* untuk menemukan partner`)
                                 }
                                 tempdata.set(mapkey, true)
                             }
