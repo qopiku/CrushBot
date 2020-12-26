@@ -9,7 +9,7 @@ module.exports = partner = (connection, contact) => {
 
         nothing = setTimeout(() => {
             return resolve('nothing')
-        }, (randtime + 20000))
+        }, (randtime + 60000))
 
         setTimeout(() => {
             looping = setInterval(() => {

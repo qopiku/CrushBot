@@ -22,9 +22,20 @@
 ### Usage
 Run the Whatsapp Bot
 
-```bash
-$ npm run start
-```
+- Regular node
+  ```bash
+  $ npm run start
+  ```
+- PM2
+  ```bash
+  $ pm2 start start.js
+  $ pm2 monit
+  ```
+- PM2 with cronjob (restart after 5 hours)
+  ```bash
+  $ pm2 start start.js --cron "* */5 * * *"
+  $ pm2 monit
+  ```
 
 After running it you need to scan the QR Code
 

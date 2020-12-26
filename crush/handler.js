@@ -20,7 +20,8 @@ var _date = new Date(),
 
 const suffix = {
     notreg: '_notRegistered',
-    nopart: '_noPartner'
+    nopart: '_noPartner',
+    search: '_search'
 }
 
 module.exports = handler = async (client, message, connection, tempdata) => {
@@ -93,18 +94,16 @@ module.exports = handler = async (client, message, connection, tempdata) => {
 
                     switch (body) {
                         case '/search':
-                            tempdata.set(mapkey, false)
-
                             if (anon.partner && anon.partner !== null) {
                                 client.sendText(from, `Sekarang kamu sedang dalam percakapan🤔\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
                             } else {
-                                searchPartner(client, from, connection)
+                                if (searching(tempdata)) {
+                                    searchPartner(client, from, connection, tempdata)
+                                }
                             }
                             break
 
                         case '/next':
-                            tempdata.set(mapkey, false)
-
                             var rowdata, updatedata
                             if (anon.partner && anon.partner !== null) {
                                 rowdata = [
@@ -130,20 +129,23 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                         client.sendText(anon.partner, `Partner kamu telah menghentikan percakapan😔\nKetik */search* untuk menemukan partner baru`)
                                     }
 
-                                    searchPartner(client, from, connection)
+                                    if (searching(tempdata)) {
+                                        searchPartner(client, from, connection, tempdata)
+                                    }
                                 })
                                 .catch(err => console.error(color('[ERROR]', 'red'), err))
                             break
 
                         case '/stop':
-                            tempdata.set(mapkey, false)
-
                             if (anon.partner && anon.partner !== null) {
+                                tempdata.set(mapkey, false)
+
                                 query.update(connection, { contact: anon.partner }, { partner: null, status: 0 })
                                     .then(() => {
                                         client.sendText(anon.partner, `Partner kamu telah menghentikan percakapan😔\nKetik */search* untuk menemukan partner baru`)
                                     })
                                     .catch(err => console.log(color('[ERROR]', 'red'), err))
+
                                 query.update(connection, { contact: from }, { partner: null, status: 0 })
                                     .then(() => {
                                         client.sendText(from, `Kamu menghentikan percakapan🙄\nKetik */search* untuk menemukan partner baru`)
@@ -155,8 +157,6 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                             break
 
                         case '/sharecontact':
-                            tempdata.set(mapkey, false)
-
                             if (anon.partner && anon.partner !== null) {
                                 client.sendContact(anon.partner, from)
                                 client.sendText(from, `Kontak WhatsApp kamu telah dikirim ke partner`)
@@ -282,7 +282,7 @@ module.exports = handler = async (client, message, connection, tempdata) => {
     }
 }
 
-const searchPartner = (client, from, connection) => {
+const searchPartner = (client, from, connection, tempdata) => {
     client.sendText(from, `Mencari partner...`)
 
     query.update(connection, { contact: from }, { status: 1 })
@@ -303,6 +303,8 @@ const searchPartner = (client, from, connection) => {
 
                         query.multiple(connection, rowdata, updatedata)
                             .then(() => {
+                                match(tempdata)
+
                                 client.sendText(from, `Partner ditemukan🐵\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
                             })
                             .catch(err => console.log(color('[ERROR]', 'red'), err))
@@ -326,6 +328,8 @@ const searchPartner = (client, from, connection) => {
 
                                     query.multiple(connection, rowdata, updatedata)
                                         .then(() => {
+                                            match(tempdata)
+
                                             client.sendText(from, `Partner ditemukan🐵\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
                                         })
                                 }
@@ -336,4 +340,25 @@ const searchPartner = (client, from, connection) => {
                 .catch(err => console.error(color('[ERROR]', 'red'), err))
         })
         .catch(err => console.error(color('[ERROR]', 'red'), err))
+}
+
+const searching = (tempdata) => {
+    const mapkey = from + suffix.search
+
+    if (tempdata.get(mapkey) == undefined) {
+        tempdata.set(mapkey, false)
+    }
+    if (tempdata.get(mapkey) == false) {
+        return true
+    }
+    tempdata.set(mapkey, true)
+    return false
+}
+
+const match = (tempdata) => {
+    const nopart = from + suffix.nopart
+    const search = from + suffix.search
+
+    tempdata.set(nopart, false)
+    tempdata.set(search, false)
 }
