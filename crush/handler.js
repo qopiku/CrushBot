@@ -36,9 +36,12 @@ module.exports = handler = async (client, message, connection, tempdata) => {
         filter.removeWords('suka')
         // add words to the blacklist
         filter.addWords('anjing', 'babi', 'kunyuk', 'bajingan', 'asu', 'bangsat', 'kampret', 'kontol', 'memek', 'ngentot', 'pentil', 'perek', 'pepek', 'pecun', 'bencong', 'banci', 'maho', 'gila', 'sinting', 'tolol', 'sarap', 'lonte', 'hencet', 'taptei', 'kampang', 'pilat', 'keparat', 'bejad', 'gembel', 'brengsek', 'tai', 'anjrit', 'bangsat', 'fuck', 'tete', 'tetek', 'ngulum', 'jembut', 'totong', 'kolop', 'puki', 'pukimak', 'bodat', 'heang', 'jancuk', 'burit', 'titit', 'nenen', 'bejat', 'silit', 'sempak', 'fucking', 'asshole', 'bitch', 'penis', 'vagina', 'klitoris', 'kelentit', 'borjong', 'dancuk', 'pantek', 'taek', 'itil', 'teho', 'bejat', 'bagudung', 'babami', 'kanciang', 'bungul', 'idiot', 'kimak', 'henceut', 'kacuk', 'blowjob', 'pussy', 'dick', 'damn', 'ass')
-        const safeMessage = filter.clean((type === 'chat') ? message.body : ((type === 'image' && caption)) ? caption : '').catch(() => {
-            return message.body
-        })
+        var safeMessage = ''
+        try {
+            safeMessage = filter.clean(body)
+        } catch (err) {
+            safeMessage = body
+        }
 
         // ignore chat from groups
         if (isGroupMsg) return
