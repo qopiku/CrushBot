@@ -97,7 +97,7 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                             if (anon.partner && anon.partner !== null) {
                                 client.sendText(from, `Sekarang kamu sedang dalam percakapan🤔\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
                             } else {
-                                if (searching(tempdata)) {
+                                if (searching(from, tempdata)) {
                                     searchPartner(client, from, connection, tempdata)
                                 }
                             }
@@ -129,7 +129,7 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                         client.sendText(anon.partner, `Partner kamu telah menghentikan percakapan😔\nKetik */search* untuk menemukan partner baru`)
                                     }
 
-                                    if (searching(tempdata)) {
+                                    if (searching(from, tempdata)) {
                                         searchPartner(client, from, connection, tempdata)
                                     }
                                 })
@@ -303,7 +303,7 @@ const searchPartner = (client, from, connection, tempdata) => {
 
                         query.multiple(connection, rowdata, updatedata)
                             .then(() => {
-                                match(tempdata)
+                                match(from, tempdata)
 
                                 client.sendText(from, `Partner ditemukan🐵\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
                             })
@@ -328,7 +328,7 @@ const searchPartner = (client, from, connection, tempdata) => {
 
                                     query.multiple(connection, rowdata, updatedata)
                                         .then(() => {
-                                            match(tempdata)
+                                            match(from, tempdata)
 
                                             client.sendText(from, `Partner ditemukan🐵\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
                                         })
@@ -342,7 +342,7 @@ const searchPartner = (client, from, connection, tempdata) => {
         .catch(err => console.error(color('[ERROR]', 'red'), err))
 }
 
-const searching = (tempdata) => {
+const searching = (from, tempdata) => {
     const mapkey = from + suffix.search
 
     if (tempdata.get(mapkey) == undefined) {
@@ -355,7 +355,7 @@ const searching = (tempdata) => {
     return false
 }
 
-const match = (tempdata) => {
+const match = (from, tempdata) => {
     const nopart = from + suffix.nopart
     const search = from + suffix.search
 
