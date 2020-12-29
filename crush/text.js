@@ -25,14 +25,6 @@ exports.commands = () => {
 */donate* — Donasi ke CrushBot`
 }
 
-exports.terms = () => {
-    return ``
-}
-
-exports.rules = () => {
-    return ``
-}
-
 exports.about = (data) => {
     return `*CrushBot v0.1.0*
 Dikelola dan Dikembangkan oleh @suluh_s

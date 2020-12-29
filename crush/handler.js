@@ -14,12 +14,6 @@ var Filter = require('bad-words'),
     filter = new Filter({ list: ['anjing', 'babi', 'kunyuk', 'bajingan', 'asu', 'bangsat', 'kampret', 'kontol', 'memek', 'ngentot', 'pentil', 'perek', 'pepek', 'pecun', 'bencong', 'banci', 'maho', 'gila', 'sinting', 'tolol', 'sarap', 'lonte', 'hencet', 'taptei', 'kampang', 'pilat', 'keparat', 'bejad', 'gembel', 'brengsek', 'tai', 'anjrit', 'bangsat', 'fuck', 'tete', 'tetek', 'ngulum', 'jembut', 'totong', 'kolop', 'puki', 'pukimak', 'bodat', 'heang', 'jancuk', 'burit', 'titit', 'nenen', 'bejat', 'silit', 'sempak', 'fucking', 'asshole', 'bitch', 'penis', 'vagina', 'klitoris', 'kelentit', 'borjong', 'dancuk', 'pantek', 'taek', 'itil', 'teho', 'bejat', 'bagudung', 'babami', 'kanciang', 'bungul', 'idiot', 'kimak', 'henceut', 'kacuk', 'blowjob', 'pussy', 'dick', 'damn', 'ass'] }),
     safeMessage = ''
 
-var _date = new Date(),
-    year = _date.getFullYear(),
-    month = (_date.getMonth() + 1),
-    date = _date.getDate(),
-    dateNow = year + '-' + month + '-' + date
-
 const suffix = {
     notreg: '_notRegistered',
     nopart: '_noPartner',

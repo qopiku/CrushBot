@@ -1,4 +1,3 @@
-// require('dotenv').config({ path: __dirname + '/../../.env' })
 const rethink = require('rethinkdb')
 const name = process.env.RETHINK_DB
 
