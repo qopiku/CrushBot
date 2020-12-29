@@ -4,7 +4,7 @@
 ## Getting Started
 
 ### Requirements
-1. [NodeJS v14 (and npm)](https://nodejs.org/en/)
+1. [NodeJS v14.15.x (and npm)](https://nodejs.org/en/)
 2. [RethinkDB](https://rethink.com/)
 
 ### Install
@@ -55,4 +55,4 @@ WhatsApp are not allowing user using External Automation<br>
 **USE AT YOUR OWN RISK**
 
 ### License
-[Apache-2.0](https://github.com/sProDev/CrushBot/blob/main/LICENSE)
+[sProDev License](https://github.com/sProDev/CrushBot/blob/main/LICENSE)
