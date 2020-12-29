@@ -50,20 +50,20 @@ module.exports = handler = async (client, message, connection, tempdata) => {
         // public commands
         switch (body) {
             case '/start':
-                return query.insert(connection, from, pushname)
-                    .then(() => {
-                        client.sendText(from, text.start())
+                return await query.insert(connection, from, pushname)
+                    .then(async () => {
+                        await client.sendText(from, text.start())
                     })
                     .catch(err => console.error(color('[ERROR]', 'red'), err))
                 break
 
             case '/speed':
             case '/ping':
-                return client.sendText(from, `Pong!!!\nKecepatan proses: ${processTime(t, moment())} detik.`)
+                return await client.sendText(from, `Pong!!!\nKecepatan proses: ${processTime(t, moment())} detik.`)
                 break
 
             case '/help':
-                return client.sendText(from, text.help())
+                return await client.sendText(from, text.help())
                 break
 
             case '/about':
@@ -71,14 +71,14 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                     chatIds = await client.getAllChatIds(),
                     groups = await client.getAllGroups()
 
-                return client.sendText(from, text.about({
+                return await client.sendText(from, text.about({
                     chatroom: (chatIds.length - groups.length),
                     messages: loadedMsg
                 }))
                 break
 
             case '/donate':
-                return client.sendText(from, text.donate())
+                return await client.sendText(from, text.donate())
                 break
 
             default:
@@ -86,7 +86,7 @@ module.exports = handler = async (client, message, connection, tempdata) => {
         }
 
         // registered client commands
-        query.retrieve(connection, from)
+        await query.retrieve(connection, from)
             .then(async (people) => {
                 if (people.length) {
                     const anon = people[0]
@@ -95,7 +95,7 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                     switch (body) {
                         case '/search':
                             if (anon.partner && anon.partner !== null) {
-                                client.sendText(from, `Sekarang kamu sedang dalam percakapan🤔\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
+                                await client.sendText(from, `Sekarang kamu sedang dalam percakapan🤔\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
                             } else {
                                 if (searching(from, tempdata)) {
                                     searchPartner(client, from, connection, tempdata)
@@ -123,10 +123,10 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                 ]
                             }
 
-                            query.multiple(connection, rowdata, updatedata)
-                                .then(() => {
+                            await query.multiple(connection, rowdata, updatedata)
+                                .then(async () => {
                                     if (anon.partner && anon.partner !== null) {
-                                        client.sendText(anon.partner, `Partner kamu telah menghentikan percakapan😔\nKetik */search* untuk menemukan partner baru`)
+                                        await client.sendText(anon.partner, `Partner kamu telah menghentikan percakapan😔\nKetik */search* untuk menemukan partner baru`)
                                     }
 
                                     if (searching(from, tempdata)) {
@@ -140,28 +140,28 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                             if (anon.partner && anon.partner !== null) {
                                 tempdata.set(mapkey, false)
 
-                                query.update(connection, { contact: anon.partner }, { partner: null, status: 0 })
-                                    .then(() => {
-                                        client.sendText(anon.partner, `Partner kamu telah menghentikan percakapan😔\nKetik */search* untuk menemukan partner baru`)
+                                await query.update(connection, { contact: anon.partner }, { partner: null, status: 0 })
+                                    .then(async () => {
+                                        await client.sendText(anon.partner, `Partner kamu telah menghentikan percakapan😔\nKetik */search* untuk menemukan partner baru`)
                                     })
                                     .catch(err => console.log(color('[ERROR]', 'red'), err))
 
-                                query.update(connection, { contact: from }, { partner: null, status: 0 })
-                                    .then(() => {
-                                        client.sendText(from, `Kamu menghentikan percakapan🙄\nKetik */search* untuk menemukan partner baru`)
+                                await query.update(connection, { contact: from }, { partner: null, status: 0 })
+                                    .then(async () => {
+                                        await client.sendText(from, `Kamu menghentikan percakapan🙄\nKetik */search* untuk menemukan partner baru`)
                                     })
                                     .catch(err => console.log(color('[ERROR]', 'red'), err))
                             } else {
-                                client.sendText(from, `Kamu belum memiliki partner🤔\nKetik */search* untuk menemukan partner`)
+                                await client.sendText(from, `Kamu belum memiliki partner🤔\nKetik */search* untuk menemukan partner`)
                             }
                             break
 
                         case '/sharecontact':
                             if (anon.partner && anon.partner !== null) {
-                                client.sendContact(anon.partner, from)
-                                client.sendText(from, `Kontak WhatsApp kamu telah dikirim ke partner`)
+                                await client.sendContact(anon.partner, from)
+                                await client.sendText(from, `Kontak WhatsApp kamu telah dikirim ke partner`)
                             } else {
-                                client.sendText(from, `Kamu belum memiliki partner🤔\nKetik */search* untuk menemukan partner`)
+                                await client.sendText(from, `Kamu belum memiliki partner🤔\nKetik */search* untuk menemukan partner`)
                             }
                             break
 
@@ -174,19 +174,19 @@ module.exports = handler = async (client, message, connection, tempdata) => {
 
                                 switch (type) {
                                     case 'audio':
-                                        client.sendText(from, `*INFORMASI*\n\nFile audio belum support pada WhatsApp Bot ini, artinya audio yang kamu kirim tidak sampai ke partner`)
+                                        await client.sendText(from, `*INFORMASI*\n\nFile audio belum support pada WhatsApp Bot ini, artinya audio yang kamu kirim tidak sampai ke partner`)
                                         break
 
                                     case 'vcard':
-                                        client.sendText(from, `*INFORMASI*\n\nVCard belum support pada WhatsApp Bot ini, artinya kontak yang kamu kirim tidak sampai ke partner`)
+                                        await client.sendText(from, `*INFORMASI*\n\nVCard belum support pada WhatsApp Bot ini, artinya kontak yang kamu kirim tidak sampai ke partner`)
                                         break
 
                                     case 'multi_vcard':
-                                        client.sendText(from, `*INFORMASI*\n\nVCard belum support pada WhatsApp Bot ini, artinya kontak yang kamu kirim tidak sampai ke partner`)
+                                        await client.sendText(from, `*INFORMASI*\n\nVCard belum support pada WhatsApp Bot ini, artinya kontak yang kamu kirim tidak sampai ke partner`)
                                         break
 
                                     case 'document':
-                                        client.sendText(from, `*INFORMASI*\n\nFile dokumen belum support pada WhatsApp Bot ini, artinya dokumen yang kamu kirim tidak sampai ke partner`)
+                                        await client.sendText(from, `*INFORMASI*\n\nFile dokumen belum support pada WhatsApp Bot ini, artinya dokumen yang kamu kirim tidak sampai ke partner`)
                                         break
 
                                     case 'image':
@@ -199,7 +199,7 @@ module.exports = handler = async (client, message, connection, tempdata) => {
 
                                     case 'location':
                                         const { loc, lat, lng } = message
-                                        client.sendLocation(anon.partner, lat, lng, loc)
+                                        await client.sendLocation(anon.partner, lat, lng, loc)
                                             .catch(err => console.error(color('[ERROR]', 'red'), err))
                                         break
 
@@ -213,7 +213,7 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                         const convertname = `${__dirname}/../writeable/${message.t}.convert.png`
                                         mediaData = await decryptMedia(message, uaOverride)
 
-                                        fs.writeFile(filename, mediaData)
+                                        await fs.writeFile(filename, mediaData)
                                             .then(async () => {
                                                 await webp.dwebp(filename, convertname, '-o')
                                                     .then(async () => {
@@ -235,11 +235,11 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                         break
 
                                     case 'chat':
-                                        client.sendText(anon.partner, safeMessage)
+                                        await client.sendText(anon.partner, safeMessage)
                                         break
 
                                     case 'video':
-                                        client.sendText(from, `*INFORMASI*\n\nFile video belum support pada WhatsApp Bot ini, artinya video yang kamu kirim tidak sampai ke partner`)
+                                        await client.sendText(from, `*INFORMASI*\n\nFile video belum support pada WhatsApp Bot ini, artinya video yang kamu kirim tidak sampai ke partner`)
                                         break
 
                                     case 'ptt':
@@ -258,7 +258,7 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                     tempdata.set(mapkey, false)
                                 }
                                 if (tempdata.get(mapkey) == false) {
-                                    client.sendText(from, `Ketik */search* untuk menemukan partner`)
+                                    await client.sendText(from, `Ketik */search* untuk menemukan partner`)
                                 }
                                 tempdata.set(mapkey, true)
                             }
@@ -271,7 +271,7 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                         tempdata.set(mapkey, false)
                     }
                     if (tempdata.get(mapkey) == false) {
-                        client.sendText(from, `Ketik */start* untuk memulai`)
+                        await client.sendText(from, `Ketik */start* untuk memulai`)
                     }
                     tempdata.set(mapkey, true)
                 }
@@ -282,13 +282,13 @@ module.exports = handler = async (client, message, connection, tempdata) => {
     }
 }
 
-const searchPartner = (client, from, connection, tempdata) => {
-    client.sendText(from, `Mencari partner...`)
+const searchPartner = async (client, from, connection, tempdata) => {
+    await client.sendText(from, `Mencari partner...`)
 
-    query.update(connection, { contact: from }, { status: 1 })
-        .then(() => {
-            query.partner(connection, from)
-                .then((res) => {
+    await query.update(connection, { contact: from }, { status: 1 })
+        .then(async () => {
+            await query.partner(connection, from)
+                .then(async (res) => {
                     var datatype = (typeof res)
 
                     if (datatype != 'string' && res != 'nothing') {
@@ -301,20 +301,22 @@ const searchPartner = (client, from, connection, tempdata) => {
                             { partner: from, status: 0 }
                         ]
 
-                        query.multiple(connection, rowdata, updatedata)
-                            .then(() => {
+                        await query.multiple(connection, rowdata, updatedata)
+                            .then(async () => {
                                 match(from, tempdata)
 
-                                client.sendText(from, `Partner ditemukan🐵\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
+                                await client.sendText(from, `Partner ditemukan🐵\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
                             })
                             .catch(err => console.log(color('[ERROR]', 'red'), err))
                     } else {
-                        query.retrieve(connection, from)
-                            .then((human) => {
+                        await query.retrieve(connection, from)
+                            .then(async (human) => {
                                 if (human.partner == null) {
-                                    query.update(connection, { contact: from }, { status: 0 })
-                                        .then(() => {
-                                            client.sendText(from, `Partner tidak dapat ditemukan🥺\n\nMungkin kamu bisa coba beberapa saat lagi, yang sabar yaa😉`)
+                                    await query.update(connection, { contact: from }, { status: 0 })
+                                        .then(async () => {
+                                            searching(from, tempdata, false)
+
+                                            await client.sendText(from, `Partner tidak dapat ditemukan🥺\n\nMungkin kamu bisa coba beberapa saat lagi, yang sabar yaa😉`)
                                         })
                                 } else {
                                     var rowdata = [
@@ -326,11 +328,11 @@ const searchPartner = (client, from, connection, tempdata) => {
                                         { partner: from, status: 0 }
                                     ]
 
-                                    query.multiple(connection, rowdata, updatedata)
-                                        .then(() => {
+                                    await query.multiple(connection, rowdata, updatedata)
+                                        .then(async () => {
                                             match(from, tempdata)
 
-                                            client.sendText(from, `Partner ditemukan🐵\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
+                                            await client.sendText(from, `Partner ditemukan🐵\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
                                         })
                                 }
                             })
@@ -342,17 +344,22 @@ const searchPartner = (client, from, connection, tempdata) => {
         .catch(err => console.error(color('[ERROR]', 'red'), err))
 }
 
-const searching = (from, tempdata) => {
+const searching = (from, tempdata, status = true) => {
     const mapkey = from + suffix.search
+    if (status == true) {
+        var output = false
 
-    if (tempdata.get(mapkey) == undefined) {
+        if (tempdata.get(mapkey) == undefined) {
+            tempdata.set(mapkey, false)
+        }
+        if (tempdata.get(mapkey) == false) {
+            output = true
+        }
+        tempdata.set(mapkey, true)
+        return output
+    } else {
         tempdata.set(mapkey, false)
     }
-    if (tempdata.get(mapkey) == false) {
-        return true
-    }
-    tempdata.set(mapkey, true)
-    return false
 }
 
 const match = (from, tempdata) => {
