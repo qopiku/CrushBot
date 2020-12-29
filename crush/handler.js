@@ -257,7 +257,7 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                 if (tempdata.get(mapkey) == undefined) {
                                     tempdata.set(mapkey, false)
                                 }
-                                if (tempdata.get(mapkey) == false) {
+                                if (tempdata.get(mapkey) == false && searching(from, tempdata)) {
                                     await client.sendText(from, `Ketik */search* untuk menemukan partner`)
                                 }
                                 tempdata.set(mapkey, true)
