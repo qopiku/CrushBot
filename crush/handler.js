@@ -184,11 +184,11 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                         break
 
                                     case 'vcard':
-                                        await client.sendText(from, `*INFORMASI*\n\nVCard belum support pada WhatsApp Bot ini, artinya kontak yang kamu kirim tidak sampai ke partner`)
+                                        await client.sendText(from, `*INFORMASI*\n\nVCard belum support pada WhatsApp Bot ini, artinya kontak yang kamu kirim tidak sampai ke partner\n\nKamu bisa menggunakan perintah */sharecontact* untuk membagikan kontak WhatsApp kamu ke partner`)
                                         break
 
                                     case 'multi_vcard':
-                                        await client.sendText(from, `*INFORMASI*\n\nVCard belum support pada WhatsApp Bot ini, artinya kontak yang kamu kirim tidak sampai ke partner`)
+                                        await client.sendText(from, `*INFORMASI*\n\nVCard belum support pada WhatsApp Bot ini, artinya kontak yang kamu kirim tidak sampai ke partner\n\nKamu bisa menggunakan perintah */sharecontact* untuk membagikan kontak WhatsApp kamu ke partner`)
                                         break
 
                                     case 'document':
