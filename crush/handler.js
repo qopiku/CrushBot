@@ -48,7 +48,7 @@ module.exports = handler = async (client, message, connection, tempdata) => {
         if (isGroupMsg) return
 
         // public commands
-        switch (body) {
+        switch (body.toLowerCase()) {
             case '/start':
                 return await query.insert(connection, from, pushname)
                     .then(async () => {
@@ -92,11 +92,13 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                     const anon = people[0]
                     const mapkey = from + suffix.nopart
 
-                    switch (body) {
+                    switch (body.toLowerCase()) {
                         case '/search':
                             if (anon.partner && anon.partner !== null) {
                                 await client.sendText(from, `Sekarang kamu sedang dalam percakapan🤔\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
                             } else {
+                                console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'looking for partner')
+
                                 if (searching(from, tempdata)) {
                                     searchPartner(client, from, connection, tempdata)
                                 }
@@ -123,6 +125,8 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                 ]
                             }
 
+                            console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'skipped conversation')
+
                             await query.multiple(connection, rowdata, updatedata)
                                 .then(async () => {
                                     if (anon.partner && anon.partner !== null) {
@@ -138,6 +142,8 @@ module.exports = handler = async (client, message, connection, tempdata) => {
 
                         case '/stop':
                             if (anon.partner && anon.partner !== null) {
+                                console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'terminated conversation')
+
                                 tempdata.set(mapkey, false)
 
                                 await query.update(connection, { contact: anon.partner }, { partner: null, status: 0 })
@@ -158,6 +164,8 @@ module.exports = handler = async (client, message, connection, tempdata) => {
 
                         case '/sharecontact':
                             if (anon.partner && anon.partner !== null) {
+                                console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), 'Share contact from', color('+' + from.replace('@c.us', '')), 'to', color('+' + anon.partner.replace('@c.us', '')))
+
                                 await client.sendContact(anon.partner, from)
                                 await client.sendText(from, `Kontak WhatsApp kamu telah dikirim ke partner`)
                             } else {
@@ -169,8 +177,6 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                             if (anon.partner && anon.partner !== null) {
                                 tempdata.set(mapkey, false)
                                 var filename, mediaData, imageBase64
-
-                                console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), 'Message from', color(pushname), 'for', color('+' + anon.partner.replace('@c.us', '')))
 
                                 switch (type) {
                                     case 'audio':
@@ -190,6 +196,8 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                         break
 
                                     case 'image':
+                                        console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), 'Picture from', color('+' + from.replace('@c.us', '')), 'to', color('+' + anon.partner.replace('@c.us', '')))
+
                                         filename = `${message.t}.${mime.extension(message.mimetype)}`
                                         mediaData = await decryptMedia(message, uaOverride)
                                         imageBase64 = `data:${mimetype};base64,${mediaData.toString('base64')}`
@@ -198,6 +206,8 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                         break
 
                                     case 'location':
+                                        console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), 'Location from', color('+' + from.replace('@c.us', '')), 'to', color('+' + anon.partner.replace('@c.us', '')))
+
                                         const { loc, lat, lng } = message
                                         await client.sendLocation(anon.partner, lat, lng, loc)
                                             .catch(err => console.error(color('[ERROR]', 'red'), err))
@@ -217,6 +227,8 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                             .then(async () => {
                                                 await webp.dwebp(filename, convertname, '-o')
                                                     .then(async () => {
+                                                        console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), 'Sticker from', color('+' + from.replace('@c.us', '')), 'to', color('+' + anon.partner.replace('@c.us', '')))
+
                                                         imageBase64 = await fs.readFile(convertname, { encoding: 'base64' })
 
                                                         await client.sendImageAsSticker(anon.partner, `data:image/png;base64,${imageBase64}`)
@@ -235,6 +247,8 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                         break
 
                                     case 'chat':
+                                        console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), 'Message from', color('+' + from.replace('@c.us', '')), 'to', color('+' + anon.partner.replace('@c.us', '')))
+
                                         await client.sendText(anon.partner, safeMessage)
                                         break
 
@@ -243,6 +257,8 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                         break
 
                                     case 'ptt':
+                                        console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), 'Voice note from', color('+' + from.replace('@c.us', '')), 'to', color('+' + anon.partner.replace('@c.us', '')))
+
                                         mediaData = await decryptMedia(message, uaOverride)
                                         const pttBase64 = `data:${mimetype};base64,${mediaData.toString('base64')}`
 
@@ -303,6 +319,8 @@ const searchPartner = async (client, from, connection, tempdata) => {
 
                         await query.multiple(connection, rowdata, updatedata)
                             .then(async () => {
+                                console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'meets', color('+' + res.contact.replace('@c.us', '')))
+
                                 match(from, tempdata)
 
                                 await client.sendText(from, `Partner ditemukan🐵\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
@@ -314,6 +332,8 @@ const searchPartner = async (client, from, connection, tempdata) => {
                                 if (human.partner == null) {
                                     await query.update(connection, { contact: from }, { status: 0 })
                                         .then(async () => {
+                                            console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'could not find partner')
+
                                             searching(from, tempdata, false)
 
                                             await client.sendText(from, `Partner tidak dapat ditemukan🥺\n\nMungkin kamu bisa coba beberapa saat lagi, yang sabar yaa😉`)
@@ -330,6 +350,8 @@ const searchPartner = async (client, from, connection, tempdata) => {
 
                                     await query.multiple(connection, rowdata, updatedata)
                                         .then(async () => {
+                                            console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'meets', color('+' + human.partner.replace('@c.us', '')))
+
                                             match(from, tempdata)
 
                                             await client.sendText(from, `Partner ditemukan🐵\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
