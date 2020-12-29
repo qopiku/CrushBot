@@ -1,4 +1,3 @@
-// require('dotenv').config({ path: __dirname + '/../.env' })
 const { create, Client } = require('@open-wa/wa-automate')
 const { color, logging } = require('./utils')
 const handler = require('./handler')
