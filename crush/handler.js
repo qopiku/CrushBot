@@ -36,7 +36,13 @@ module.exports = handler = async (client, message, connection, tempdata) => {
         switch (body.toLowerCase()) {
             case '/start':
                 return await query.insert(connection, from, pushname)
-                    .then(async () => {
+                    .then(async (output) => {
+                        if (output.inserted) {
+                            console.log('[START]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'successfully registered')
+                        } else {
+                            console.log('[COMMAND]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'run command', color(body.toLowerCase(), 'yellow'))
+                        }
+
                         await client.sendText(from, text.start())
                     })
                     .catch(err => console.error(color('[ERROR]', 'red'), err))
@@ -44,14 +50,20 @@ module.exports = handler = async (client, message, connection, tempdata) => {
 
             case '/speed':
             case '/ping':
+                console.log('[COMMAND]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'run command', color(body.toLowerCase(), 'yellow'))
+
                 return await client.sendText(from, `Pong!!!\nKecepatan proses: ${processTime(t, moment())} detik.`)
                 break
 
             case '/help':
+                console.log('[COMMAND]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'run command', color(body.toLowerCase(), 'yellow'))
+
                 return await client.sendText(from, text.help())
                 break
 
             case '/about':
+                console.log('[COMMAND]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'run command', color(body.toLowerCase(), 'yellow'))
+
                 var loadedMsg = await client.getAmountOfLoadedMessages(),
                     chatIds = await client.getAllChatIds(),
                     groups = await client.getAllGroups()
@@ -63,6 +75,8 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                 break
 
             case '/donate':
+                console.log('[COMMAND]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'run command', color(body.toLowerCase(), 'yellow'))
+
                 return await client.sendText(from, text.donate())
                 break
 
@@ -79,11 +93,11 @@ module.exports = handler = async (client, message, connection, tempdata) => {
 
                     switch (body.toLowerCase()) {
                         case '/search':
-                            if (anon.partner && anon.partner !== null) {
+                            if (anon.partner && anon.partner != null) {
                                 await client.sendText(from, `Sekarang kamu sedang dalam percakapan🤔\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
                             } else {
                                 if (searching(from, tempdata)) {
-                                    console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'looking for partner')
+                                    console.log('[SEARCH]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'looking for partner')
 
                                     searchPartner(client, message, connection, tempdata)
                                 }
@@ -92,7 +106,7 @@ module.exports = handler = async (client, message, connection, tempdata) => {
 
                         case '/next':
                             var rowdata, updatedata
-                            if (anon.partner && anon.partner !== null) {
+                            if (anon.partner && anon.partner != null) {
                                 rowdata = [
                                     { contact: anon.partner },
                                     { contact: from }
@@ -112,12 +126,12 @@ module.exports = handler = async (client, message, connection, tempdata) => {
 
                             await query.multiple(connection, rowdata, updatedata)
                                 .then(async () => {
-                                    if (anon.partner && anon.partner !== null) {
+                                    if (anon.partner && anon.partner != null) {
                                         await client.sendText(anon.partner, `Partner kamu telah menghentikan percakapan😔\nKetik */search* untuk menemukan partner baru`)
                                     }
 
                                     if (searching(from, tempdata)) {
-                                        console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'skipped conversation')
+                                        console.log('[SKIP]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'skipped conversation')
 
                                         searchPartner(client, message, connection, tempdata)
                                     }
@@ -126,9 +140,11 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                             break
 
                         case '/stop':
-                            if (searching(from, tempdata)) {
-                                if (anon.partner && anon.partner !== null) {
-                                    console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'terminated conversation')
+                            var boleh_tidak = tempdata.get(from + suffix.search);
+
+                            if (boleh_tidak != undefined && boleh_tidak == false) {
+                                if (anon.partner && anon.partner != null) {
+                                    console.log('[STOP]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'terminated conversation')
 
                                     unSearchPart(from, anon.partner, tempdata)
 
@@ -150,9 +166,11 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                             break
 
                         case '/sharecontact':
-                            if (searching(from, tempdata)) {
-                                if (anon.partner && anon.partner !== null) {
-                                    console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), 'Share contact from', color('+' + from.replace('@c.us', '')), 'to', color('+' + anon.partner.replace('@c.us', '')))
+                            var boleh_tidak = tempdata.get(from + suffix.search);
+
+                            if (boleh_tidak != undefined && boleh_tidak == false) {
+                                if (anon.partner && anon.partner != null) {
+                                    console.log('[SHARE]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), 'Share contact from', color('+' + from.replace('@c.us', '')), 'to', color('+' + anon.partner.replace('@c.us', '')))
 
                                     await client.sendContact(anon.partner, from)
                                     await client.sendText(from, `Kontak WhatsApp kamu telah dikirim ke partner`)
@@ -163,8 +181,8 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                             break
 
                         default:
-                            if (anon.partner && anon.partner !== null) {
-                                tempdata.set(mapkey, false)
+                            if (anon.partner && anon.partner != null) {
+                                unSearchPart(from, anon.partner, tempdata)
                                 var filename, mediaData, imageBase64
 
                                 switch (type) {
@@ -265,7 +283,9 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                 if (tempdata.get(mapkey) == undefined) {
                                     tempdata.set(mapkey, false)
                                 }
-                                if (tempdata.get(mapkey) == false && searching(from, tempdata)) {
+                                var boleh_tidak = tempdata.get(from + suffix.search);
+
+                                if (tempdata.get(mapkey) == false && (boleh_tidak != undefined && boleh_tidak == false)) {
                                     await client.sendText(from, `Ketik */search* untuk menemukan partner`)
                                 }
                                 tempdata.set(mapkey, true)
@@ -298,7 +318,6 @@ const filterMessage = async (message) => {
         var output = filter.clean(`${message}`)
         return output
     } catch (err) {
-        console.error(color('[ERROR]', 'red'), err)
         return message
     }
 }
@@ -325,7 +344,7 @@ const searchPartner = async (client, message, connection, tempdata) => {
 
                         await query.multiple(connection, rowdata, updatedata)
                             .then(async () => {
-                                console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'meets', color('+' + res.contact.replace('@c.us', '')))
+                                console.log('[MATCH]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'meets', color('+' + res.contact.replace('@c.us', '')))
 
                                 unSearchPart(from, res.contact, tempdata)
 
@@ -338,9 +357,9 @@ const searchPartner = async (client, message, connection, tempdata) => {
                                 if (human.partner == null) {
                                     await query.update(connection, { contact: from }, { status: 0 })
                                         .then(async () => {
-                                            console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'could not find partner')
+                                            console.log('[SAD]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'could not find partner')
 
-                                            searching(from, tempdata, false)
+                                            unSearchPart(from, '', tempdata)
 
                                             await client.sendText(from, `Partner tidak dapat ditemukan🥺\n\nMungkin kamu bisa coba beberapa saat lagi, yang sabar yaa😉`)
                                         })
@@ -356,7 +375,7 @@ const searchPartner = async (client, message, connection, tempdata) => {
 
                                     await query.multiple(connection, rowdata, updatedata)
                                         .then(async () => {
-                                            console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'meets', color('+' + human.partner.replace('@c.us', '')))
+                                            console.log('[MATCH]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'meets', color('+' + human.partner.replace('@c.us', '')))
 
                                             unSearchPart(from, human.partner, tempdata)
 
@@ -375,14 +394,17 @@ const searchPartner = async (client, message, connection, tempdata) => {
 const searching = (from, tempdata, status = true) => {
     const mapkey = from + suffix.search
     if (status == true) {
-        var output = false
+        var output;
 
         if (tempdata.get(mapkey) == undefined) {
             tempdata.set(mapkey, false)
         }
         if (tempdata.get(mapkey) == false) {
             output = true
+        } else {
+            output = false
         }
+
         tempdata.set(mapkey, true)
         return output
     } else {
@@ -391,13 +413,17 @@ const searching = (from, tempdata, status = true) => {
 }
 
 const unSearchPart = (from, partner, tempdata) => {
+    if (partner.trim()) {
+        const nopart_partner = partner + suffix.nopart
+        const search_partner = partner + suffix.search
+
+        tempdata.set(nopart_partner, false)
+        tempdata.set(search_partner, false)
+    }
+
     const nopart_from = from + suffix.nopart
-    const nopart_partner = partner + suffix.nopart
     const search_from = from + suffix.search
-    const search_partner = partner + suffix.search
 
     tempdata.set(nopart_from, false)
-    tempdata.set(nopart_partner, false)
     tempdata.set(search_from, false)
-    tempdata.set(search_partner, false)
 }

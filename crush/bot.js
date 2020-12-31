@@ -5,8 +5,10 @@ const handler = require('./handler')
 var connection, tempdata
 
 const crush = (client = new Client()) => {
-    console.log('[DEV]', color('sProDev', 'yellow'))
+    console.log('')
+    console.log('[DEV] sProDev')
     console.log('[CLIENT] Client Started!')
+    console.log('')
 
     // updating bot informations
     client.setPresence(false)
@@ -22,7 +24,7 @@ const crush = (client = new Client()) => {
 
     // force it to keep the current session
     client.onStateChanged((state) => {
-        console.log('[Client State]', state)
+        console.log('[STATE]', state)
         if (state === 'CONFLICT' || state === 'DISCONNECTED') client.forceRefocus()
     })
 
