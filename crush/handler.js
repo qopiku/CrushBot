@@ -335,7 +335,7 @@ const searchPartner = async (client, message, connection, tempdata) => {
                     } else {
                         await query.retrieve(connection, from)
                             .then(async (human) => {
-                                if (human.partner === null) {
+                                if (human.partner == null) {
                                     await query.update(connection, { contact: from }, { status: 0 })
                                         .then(async () => {
                                             console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'could not find partner')
