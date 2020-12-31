@@ -130,7 +130,7 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                 if (anon.partner && anon.partner !== null) {
                                     console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'terminated conversation')
 
-                                    tempdata.set(mapkey, false)
+                                    unSearchPart(from, tempdata)
 
                                     await query.update(connection, { contact: anon.partner }, { partner: null, status: 0 })
                                         .then(async () => {
@@ -262,10 +262,10 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                         break
                                 }
                             } else {
-                                if (tempdata.get(mapkey) == undefined) {
+                                if (tempdata.get(mapkey) === undefined) {
                                     tempdata.set(mapkey, false)
                                 }
-                                if (tempdata.get(mapkey) == false && searching(from, tempdata)) {
+                                if (tempdata.get(mapkey) === false && searching(from, tempdata)) {
                                     await client.sendText(from, `Ketik */search* untuk menemukan partner`)
                                 }
                                 tempdata.set(mapkey, true)
@@ -275,10 +275,10 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                 } else {
                     const mapkey = from + suffix.notreg
 
-                    if (tempdata.get(mapkey) == undefined) {
+                    if (tempdata.get(mapkey) === undefined) {
                         tempdata.set(mapkey, false)
                     }
-                    if (tempdata.get(mapkey) == false) {
+                    if (tempdata.get(mapkey) === false) {
                         await client.sendText(from, `Ketik */start* untuk memulai`)
                     }
                     tempdata.set(mapkey, true)
@@ -327,7 +327,7 @@ const searchPartner = async (client, message, connection, tempdata) => {
                             .then(async () => {
                                 console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'meets', color('+' + res.contact.replace('@c.us', '')))
 
-                                match(from, tempdata)
+                                unSearchPart(from, tempdata)
 
                                 await client.sendText(from, `Partner ditemukan🐵\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
                             })
@@ -335,7 +335,7 @@ const searchPartner = async (client, message, connection, tempdata) => {
                     } else {
                         await query.retrieve(connection, from)
                             .then(async (human) => {
-                                if (human.partner == null) {
+                                if (human.partner === null) {
                                     await query.update(connection, { contact: from }, { status: 0 })
                                         .then(async () => {
                                             console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'could not find partner')
@@ -358,7 +358,7 @@ const searchPartner = async (client, message, connection, tempdata) => {
                                         .then(async () => {
                                             console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'meets', color('+' + human.partner.replace('@c.us', '')))
 
-                                            match(from, tempdata)
+                                            unSearchPart(from, tempdata)
 
                                             await client.sendText(from, `Partner ditemukan🐵\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
                                         })
@@ -374,13 +374,13 @@ const searchPartner = async (client, message, connection, tempdata) => {
 
 const searching = (from, tempdata, status = true) => {
     const mapkey = from + suffix.search
-    if (status == true) {
+    if (status === true) {
         var output = false
 
-        if (tempdata.get(mapkey) == undefined) {
+        if (tempdata.get(mapkey) === undefined) {
             tempdata.set(mapkey, false)
         }
-        if (tempdata.get(mapkey) == false) {
+        if (tempdata.get(mapkey) === false) {
             output = true
         }
         tempdata.set(mapkey, true)
@@ -390,7 +390,7 @@ const searching = (from, tempdata, status = true) => {
     }
 }
 
-const match = (from, tempdata) => {
+const unSearchPart = (from, tempdata) => {
     const nopart = from + suffix.nopart
     const search = from + suffix.search
 
