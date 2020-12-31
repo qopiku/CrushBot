@@ -293,13 +293,14 @@ module.exports = handler = async (client, message, connection, tempdata) => {
 const filterMessage = async (message) => {
     // filter message
     filter.removeWords('suka')
-    try {
-        body = await filter.clean(`${body}`)
-    } catch (err) {
-        body = message
-    }
 
-    return await body
+    try {
+        var output = filter.clean(`${message}`)
+        return output
+    } catch (err) {
+        console.error(color('[ERROR]', 'red'), err)
+        return message
+    }
 }
 
 const searchPartner = async (client, message, connection, tempdata) => {
