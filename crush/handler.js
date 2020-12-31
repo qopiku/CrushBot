@@ -26,7 +26,7 @@ module.exports = handler = async (client, message, connection, tempdata) => {
         let { pushname, verifiedName, formattedName } = sender
         pushname = pushname || verifiedName || formattedName
 
-        body = (type === 'chat') ? message.body : ((type === 'image' && caption)) ? caption : ''
+        body = (type == 'chat') ? message.body : ((type == 'image' && caption)) ? caption : ''
         const uaOverride = "WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
 
         // ignore chat from groups
@@ -262,10 +262,10 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                         break
                                 }
                             } else {
-                                if (tempdata.get(mapkey) === undefined) {
+                                if (tempdata.get(mapkey) == undefined) {
                                     tempdata.set(mapkey, false)
                                 }
-                                if (tempdata.get(mapkey) === false && searching(from, tempdata)) {
+                                if (tempdata.get(mapkey) == false && searching(from, tempdata)) {
                                     await client.sendText(from, `Ketik */search* untuk menemukan partner`)
                                 }
                                 tempdata.set(mapkey, true)
@@ -275,10 +275,10 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                 } else {
                     const mapkey = from + suffix.notreg
 
-                    if (tempdata.get(mapkey) === undefined) {
+                    if (tempdata.get(mapkey) == undefined) {
                         tempdata.set(mapkey, false)
                     }
-                    if (tempdata.get(mapkey) === false) {
+                    if (tempdata.get(mapkey) == false) {
                         await client.sendText(from, `Ketik */start* untuk memulai`)
                     }
                     tempdata.set(mapkey, true)
@@ -374,19 +374,19 @@ const searchPartner = async (client, message, connection, tempdata) => {
 
 const searching = (from, tempdata, status = true) => {
     const mapkey = from + suffix.search
-    if (status === true) {
+    if (status == true) {
         var output = false
 
-        if (tempdata.get(mapkey) === undefined) {
+        if (tempdata.get(mapkey) == undefined) {
             tempdata.set(mapkey, false)
         }
-        if (tempdata.get(mapkey) === false) {
+        if (tempdata.get(mapkey) == false) {
             output = true
         }
         tempdata.set(mapkey, true)
         return output
     } else {
-        return tempdata.set(mapkey, false)
+        tempdata.set(mapkey, false)
     }
 }
 
