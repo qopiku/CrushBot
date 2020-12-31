@@ -130,7 +130,7 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                 if (anon.partner && anon.partner !== null) {
                                     console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'terminated conversation')
 
-                                    unSearchPart(from, tempdata)
+                                    unSearchPart(from, anon.partner, tempdata)
 
                                     await query.update(connection, { contact: anon.partner }, { partner: null, status: 0 })
                                         .then(async () => {
@@ -327,7 +327,7 @@ const searchPartner = async (client, message, connection, tempdata) => {
                             .then(async () => {
                                 console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'meets', color('+' + res.contact.replace('@c.us', '')))
 
-                                unSearchPart(from, tempdata)
+                                unSearchPart(from, res.contact, tempdata)
 
                                 await client.sendText(from, `Partner ditemukan🐵\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
                             })
@@ -358,7 +358,7 @@ const searchPartner = async (client, message, connection, tempdata) => {
                                         .then(async () => {
                                             console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'meets', color('+' + human.partner.replace('@c.us', '')))
 
-                                            unSearchPart(from, tempdata)
+                                            unSearchPart(from, human.partner, tempdata)
 
                                             await client.sendText(from, `Partner ditemukan🐵\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
                                         })
@@ -390,10 +390,14 @@ const searching = (from, tempdata, status = true) => {
     }
 }
 
-const unSearchPart = (from, tempdata) => {
-    const nopart = from + suffix.nopart
-    const search = from + suffix.search
+const unSearchPart = (from, partner, tempdata) => {
+    const nopart_from = from + suffix.nopart
+    const nopart_partner = partner + suffix.nopart
+    const search_from = from + suffix.search
+    const search_partner = partner + suffix.search
 
-    tempdata.set(nopart, false)
-    tempdata.set(search, false)
+    tempdata.set(nopart_from, false)
+    tempdata.set(nopart_partner, false)
+    tempdata.set(search_from, false)
+    tempdata.set(search_partner, false)
 }
