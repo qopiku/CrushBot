@@ -11,8 +11,7 @@ moment.tz.setDefault('Asia/Jakarta').locale('id')
 
 var Filter = require('bad-words'),
     // add words to the blacklist
-    filter = new Filter({ list: ['anjing', 'babi', 'kunyuk', 'bajingan', 'asu', 'bangsat', 'kampret', 'kontol', 'memek', 'ngentot', 'pentil', 'perek', 'pepek', 'pecun', 'bencong', 'banci', 'maho', 'gila', 'sinting', 'tolol', 'sarap', 'lonte', 'hencet', 'taptei', 'kampang', 'pilat', 'keparat', 'bejad', 'gembel', 'brengsek', 'tai', 'anjrit', 'bangsat', 'fuck', 'tete', 'tetek', 'ngulum', 'jembut', 'totong', 'kolop', 'puki', 'pukimak', 'bodat', 'heang', 'jancuk', 'burit', 'titit', 'nenen', 'bejat', 'silit', 'sempak', 'fucking', 'asshole', 'bitch', 'penis', 'vagina', 'klitoris', 'kelentit', 'borjong', 'dancuk', 'pantek', 'taek', 'itil', 'teho', 'bejat', 'bagudung', 'babami', 'kanciang', 'bungul', 'idiot', 'kimak', 'henceut', 'kacuk', 'blowjob', 'pussy', 'dick', 'damn', 'ass'] }),
-    safeMessage = ''
+    filter = new Filter({ list: ['anjing', 'babi', 'kunyuk', 'bajingan', 'asu', 'bangsat', 'kampret', 'kontol', 'memek', 'ngentot', 'pentil', 'perek', 'pepek', 'pecun', 'bencong', 'banci', 'maho', 'gila', 'sinting', 'tolol', 'sarap', 'lonte', 'hencet', 'taptei', 'kampang', 'pilat', 'keparat', 'bejad', 'gembel', 'brengsek', 'tai', 'anjrit', 'bangsat', 'fuck', 'tete', 'tetek', 'ngulum', 'jembut', 'totong', 'kolop', 'puki', 'pukimak', 'bodat', 'heang', 'jancuk', 'burit', 'titit', 'nenen', 'bejat', 'silit', 'sempak', 'fucking', 'asshole', 'bitch', 'penis', 'vagina', 'klitoris', 'kelentit', 'borjong', 'dancuk', 'pantek', 'taek', 'itil', 'teho', 'bejat', 'bagudung', 'babami', 'kanciang', 'bungul', 'idiot', 'kimak', 'henceut', 'kacuk', 'blowjob', 'pussy', 'dick', 'damn', 'ass'] })
 
 const suffix = {
     notreg: '_notRegistered',
@@ -29,14 +28,6 @@ module.exports = handler = async (client, message, connection, tempdata) => {
 
         body = (type === 'chat') ? message.body : ((type === 'image' && caption)) ? caption : ''
         const uaOverride = "WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
-
-        // filter message
-        filter.removeWords('suka')
-        try {
-            safeMessage = filter.clean(`${body}`)
-        } catch (err) {
-            safeMessage = body
-        }
 
         // ignore chat from groups
         if (isGroupMsg) return
@@ -91,10 +82,10 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                             if (anon.partner && anon.partner !== null) {
                                 await client.sendText(from, `Sekarang kamu sedang dalam percakapan🤔\n*/next* — Temukan partner baru\n*/stop* — Hentikan percakapan ini`)
                             } else {
-                                console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'looking for partner')
-
                                 if (searching(from, tempdata)) {
-                                    searchPartner(client, from, connection, tempdata)
+                                    console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'looking for partner')
+
+                                    searchPartner(client, message, connection, tempdata)
                                 }
                             }
                             break
@@ -119,8 +110,6 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                 ]
                             }
 
-                            console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'skipped conversation')
-
                             await query.multiple(connection, rowdata, updatedata)
                                 .then(async () => {
                                     if (anon.partner && anon.partner !== null) {
@@ -128,42 +117,48 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                     }
 
                                     if (searching(from, tempdata)) {
-                                        searchPartner(client, from, connection, tempdata)
+                                        console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'skipped conversation')
+
+                                        searchPartner(client, message, connection, tempdata)
                                     }
                                 })
                                 .catch(err => console.error(color('[ERROR]', 'red'), err))
                             break
 
                         case '/stop':
-                            if (anon.partner && anon.partner !== null) {
-                                console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'terminated conversation')
+                            if (searching(from, tempdata)) {
+                                if (anon.partner && anon.partner !== null) {
+                                    console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color('+' + from.replace('@c.us', '')), 'terminated conversation')
 
-                                tempdata.set(mapkey, false)
+                                    tempdata.set(mapkey, false)
 
-                                await query.update(connection, { contact: anon.partner }, { partner: null, status: 0 })
-                                    .then(async () => {
-                                        await client.sendText(anon.partner, `Partner kamu telah menghentikan percakapan😔\nKetik */search* untuk menemukan partner baru`)
-                                    })
-                                    .catch(err => console.log(color('[ERROR]', 'red'), err))
+                                    await query.update(connection, { contact: anon.partner }, { partner: null, status: 0 })
+                                        .then(async () => {
+                                            await client.sendText(anon.partner, `Partner kamu telah menghentikan percakapan😔\nKetik */search* untuk menemukan partner baru`)
+                                        })
+                                        .catch(err => console.log(color('[ERROR]', 'red'), err))
 
-                                await query.update(connection, { contact: from }, { partner: null, status: 0 })
-                                    .then(async () => {
-                                        await client.sendText(from, `Kamu menghentikan percakapan🙄\nKetik */search* untuk menemukan partner baru`)
-                                    })
-                                    .catch(err => console.log(color('[ERROR]', 'red'), err))
-                            } else {
-                                await client.sendText(from, `Kamu belum memiliki partner🤔\nKetik */search* untuk menemukan partner`)
+                                    await query.update(connection, { contact: from }, { partner: null, status: 0 })
+                                        .then(async () => {
+                                            await client.sendText(from, `Kamu menghentikan percakapan🙄\nKetik */search* untuk menemukan partner baru`)
+                                        })
+                                        .catch(err => console.log(color('[ERROR]', 'red'), err))
+                                } else {
+                                    await client.sendText(from, `Kamu belum memiliki partner🤔\nKetik */search* untuk menemukan partner`)
+                                }
                             }
                             break
 
                         case '/sharecontact':
-                            if (anon.partner && anon.partner !== null) {
-                                console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), 'Share contact from', color('+' + from.replace('@c.us', '')), 'to', color('+' + anon.partner.replace('@c.us', '')))
+                            if (searching(from, tempdata)) {
+                                if (anon.partner && anon.partner !== null) {
+                                    console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), 'Share contact from', color('+' + from.replace('@c.us', '')), 'to', color('+' + anon.partner.replace('@c.us', '')))
 
-                                await client.sendContact(anon.partner, from)
-                                await client.sendText(from, `Kontak WhatsApp kamu telah dikirim ke partner`)
-                            } else {
-                                await client.sendText(from, `Kamu belum memiliki partner🤔\nKetik */search* untuk menemukan partner`)
+                                    await client.sendContact(anon.partner, from)
+                                    await client.sendText(from, `Kontak WhatsApp kamu telah dikirim ke partner`)
+                                } else {
+                                    await client.sendText(from, `Kamu belum memiliki partner🤔\nKetik */search* untuk menemukan partner`)
+                                }
                             }
                             break
 
@@ -196,7 +191,9 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                         mediaData = await decryptMedia(message, uaOverride)
                                         imageBase64 = `data:${mimetype};base64,${mediaData.toString('base64')}`
 
-                                        await client.sendImage(anon.partner, imageBase64, filename, `${safeMessage}`)
+                                        var safe_message = await filterMessage(body)
+
+                                        await client.sendImage(anon.partner, imageBase64, filename, `${safe_message}`)
                                         break
 
                                     case 'location':
@@ -243,7 +240,8 @@ module.exports = handler = async (client, message, connection, tempdata) => {
                                     case 'chat':
                                         console.log('[RECV]', color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), 'Message from', color('+' + from.replace('@c.us', '')), 'to', color('+' + anon.partner.replace('@c.us', '')))
 
-                                        await client.sendText(anon.partner, safeMessage)
+                                        var safe_message = await filterMessage(body)
+                                        await client.sendText(anon.partner, safe_message)
                                         break
 
                                     case 'video':
@@ -292,9 +290,22 @@ module.exports = handler = async (client, message, connection, tempdata) => {
     }
 }
 
-const searchPartner = async (client, from, connection, tempdata) => {
-    await client.sendText(from, `Mencari partner...`)
+const filterMessage = async (message) => {
+    // filter message
+    filter.removeWords('suka')
+    try {
+        body = await filter.clean(`${body}`)
+    } catch (err) {
+        body = message
+    }
 
+    return await body
+}
+
+const searchPartner = async (client, message, connection, tempdata) => {
+    const { from, t } = message
+
+    await client.sendText(from, `Mencari partner...`)
     await query.update(connection, { contact: from }, { status: 1 })
         .then(async () => {
             await query.partner(connection, from)
@@ -374,7 +385,7 @@ const searching = (from, tempdata, status = true) => {
         tempdata.set(mapkey, true)
         return output
     } else {
-        tempdata.set(mapkey, false)
+        return tempdata.set(mapkey, false)
     }
 }
 
